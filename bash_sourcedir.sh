@@ -1,1 +1,1 @@
-bash_sourcedir-0.99.sh
+src/bash_sourcedir-0.99.sh

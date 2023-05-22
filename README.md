@@ -3,7 +3,7 @@ ${FUNCNAME[0]} [-h]|[-iqd] [DIR] [MATCH]
 ARGS:
 
     <DIR>             Directory to source files from.
-
+    
     <MATCH>           Regex to match Files against. Globbing and Expansion follow Bash Settings
 
 OPTIONS:
@@ -25,7 +25,7 @@ EXAMPLES:
         ...and (-q) do not produce any output:
     
         sourcedir -q ~/.config/bashrc/ '.*\.bashrc'
-
+    
     - Source all files in '.env' starting with "config" case insensitive
         ...this inlcudes 'CONFIG.cfg' 'conFig.conf' but not 'mycfg.config'
     
