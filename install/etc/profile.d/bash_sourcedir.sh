@@ -1,0 +1,1 @@
+../../../bash_sourcedir-latest.sh
