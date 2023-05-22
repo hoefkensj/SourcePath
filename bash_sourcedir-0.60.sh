@@ -5,57 +5,74 @@
 # ############################################################################
 #
 function bash_sourcedir { 	
+	local VERSION="0.6"
 	local WARNING="WARNING: This File Needs to be Sourced not Executed ! ";
 	local HELP="
-$SOURCEDIR [-h]|[-qei] [DIR] [MATCH]
+${FUNCNAME[0]} [-h]|[-qei] [DIR] [MATCH]
 
 ARGS:
+
     <DIR>             Directory to source files from.
 
-    <MATCH>           String to match Files against. Globbing and Expansion follow Bash Settings
+    <MATCH>           Regex to match Files against. Globbing and Expansion follow Bash Settings
 
 OPTIONS:
+
     -h,  --help       Show this help text
     -i,  --nocase     Ignore Case when matching
     -q,  --quiet      Quiet/Silent/Script, Dont produce any output
+    -d,  --debug      Enable xtrace for this script
          --warning    Shows $WARNING
 
 RECOMENDED:
+
     Make Sourcedir availeble as a command:
     su -c 'cp -v ./sourcedir.sh /etc/profile.d/
 
 EXAMPLES:
 
-    MATCH:
+    - Source files in ~/.config/bashrc/ that end in '.bashrc'
+        ...and (-q) do not produce any output:
+    
+        sourcedir -q ~/.config/bashrc/ '.*\.bashrc'
 
-        '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$' : DEFAULT
-            :Note: enclose the regex in '' or \"\"
+    - Source all files in '.env' starting with "config" case insensitive
+        ...this inlcudes 'CONFIG.cfg' 'conFig.conf' but not 'mycfg.config'
+    
+        sourcedir -i .env '^config.*' 
+    
+    - Source all files in '~/.bash_aliasses/' starting with 2 numbers,
+        ...followed by an '_'. this matches '00_file.alias' but not '99file'
+   	
+   		sourcedir ~/.bash_aliasses/ '\/[0-9]{2}_.*$'  : 
 
-USAGE:
+DEFAULTS:
 
-    sourcedir -q ~/.config/bashrc/ '.*\.bashrc'      : source files in ~/.config/bashrc/ that end in '.bashrc'
-    and (-q) do not produce any output as some apparently
-    interactive shells (scp,rcp,...) can't tolerate any output.
-    sourcedir ~/.winepfx/protonGE/ '\/[0-9]{2}_.*$'  : source files starting with 2 digits + '_ ' in ~/.winepfx/protonGE/
-	";
+    - MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$' 
+    - DIR: '$PWD'
+
+";
 	# set -o errexit
 	# set -o nounset
-	local _cat _help _warn
-	function batcat ()
-	{
-		local _cat _bat LANG STRING COLOR
-		function _bat()
-		{
-			bat	--plain  --language="$LANG" <<< "$1"			
+	local _help _warn
+	function batcat () {
+		local _cat _bat
+		function _bat() {
+			local theme lang paging batopts
+			theme="Monokai Extended Origin"
+			lang="$LANG"
+			paging="never"
+			batopts="--plain --paging=$paging --theme=$theme --language=$lang"
+			bat "$batopts" <<< "$1"			
 		}
 
 		LANG="$1"
 		shift 1
 		STRING="$@"
-		_cat=$( which "cat" )
-		_bat=$( which "bat" )
-		[[ -n "$_bat" ]] &&  _bat "$STRING"
-		[[ -z $_bat ]] && echo $( printf '%s' "$@" ) | $( printf '%s' "$_cat"  ) 
+		got_cat=$( which "cat" )
+		got_bat=$( which "bat" )
+		[[ -n "$got_bat" ]] &&  _bat "$STRING"
+		[[ -z "$got_bat" ]] && echo $( printf '%s' "$@" ) | $( printf '%s' "$_cat"  ) 
 	};	
 
 	function _main ()  
@@ -64,7 +81,7 @@ USAGE:
 		function _sourcefiles () 
 		{ 
 			function _sourcefile () 			{ 
-				source "$1" && _progress "$1" "$GC" 2 "$2"   || _progress "$1" "$GC" 1 "$2"
+				source "$1" && _progress "$1" "$GC" 2 "$2"   || echo "" & _progress "$1" "$GC" 1 "$2" & echo ""
 			};
 			for CONF in $SELECTED;
 			do
@@ -108,15 +125,13 @@ USAGE:
 			_Gm  12  1  3   "$toprint"
 			_Gm "$2" 1 "$3" "$4" 
 			_G 80
-		};
-		
+		};		
 
 		SRC=$(realpath "${1}");
 		[[ -n "$2" ]] && MATCH="$2" || MATCH='/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$';
 		I=0;
 		SELECTED=$( find "$SRC" 2>/dev/null |grep -E "$MATCH" );
 		[[ -n "$SELECTED" ]] && N=$( echo "$SELECTED" |wc -l );
-		#terminal width :
 		W="${#N}";
 		GP=$((80-10-W*2))
 		GC=$((GP+1))

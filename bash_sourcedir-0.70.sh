@@ -1,70 +1,78 @@
 #!/usr/bin/env bash
 # ############################################################################
 # # PATH: /etc/profile.d                          AUTHOR: Hoefkens.J@gmail.com
-# # FILE: bash_sourcedir.sh                                   0v6 - 2023.04.26
+# # FILE: bash_sourcedir.sh                                   0v7 - 2023.04.26
 # ############################################################################
 #
 function bash_sourcedir { 	
+	local VERSION="0.7"
 	local WARNING="WARNING: This File Needs to be Sourced not Executed ! ";
-	local HELP="
-$SOURCEDIR [-h]|[-qei] [DIR] [MATCH]
+	local HELP="${FUNCNAME[0]} [-h]|[-iqd] [DIR] [MATCH]
 
 ARGS:
+
     <DIR>             Directory to source files from.
 
-    <MATCH>           String to match Files against. Globbing and Expansion follow Bash Settings
+    <MATCH>           Regex to match Files against. Globbing and Expansion follow Bash Settings
 
 OPTIONS:
+
     -h,  --help       Show this help text
     -i,  --nocase     Ignore Case when matching
     -q,  --quiet      Quiet/Silent/Script, Dont produce any output
-         --warning    Shows $WARNING
+    -d,  --debug      Enable xtrace for this script
+    -w   --warning    Shows $WARNING
 
 RECOMENDED:
+
     Make Sourcedir availeble as a command:
     su -c 'cp -v ./sourcedir.sh /etc/profile.d/
 
 EXAMPLES:
 
-    MATCH:
+    - Source files in ~/.config/bashrc/ that end in '.bashrc'
+        ...and (-q) do not produce any output:
+    
+        sourcedir -q ~/.config/bashrc/ '.*\.bashrc'
 
-        '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$' : DEFAULT
-            :Note: enclose the regex in '' or \"\"
+    - Source all files in '.env' starting with "config" case insensitive
+        ...this inlcudes 'CONFIG.cfg' 'conFig.conf' but not 'mycfg.config'
+    
+        sourcedir -i .env '^config.*' 
+    
+    - Source all files in '~/.bash_aliasses/' starting with 2 numbers,
+        ...followed by an '_'. this matches '00_file.alias' but not '99file'
+    
+        sourcedir ~/.bash_aliasses/ '\/[0-9]{2}_.*$'  : 
 
-USAGE:
+DEFAULTS:
 
-    sourcedir -q ~/.config/bashrc/ '.*\.bashrc'      : source files in ~/.config/bashrc/ that end in '.bashrc'
-    and (-q) do not produce any output as some apparently
-    interactive shells (scp,rcp,...) can't tolerate any output.
-    sourcedir ~/.winepfx/protonGE/ '\/[0-9]{2}_.*$'  : source files starting with 2 digits + '_ ' in ~/.winepfx/protonGE/
-	";
+    - MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$' 
+    - DIR: '$PWD'
+
+";
 	# set -o errexit
 	# set -o nounset
-	local _cat _help _warn
-	function batcat ()
-	{
-		local _cat _bat LANG STRING COLOR
-		function _bat()
-		{
-			bat	--plain  --language="$LANG" <<< "$1"			
-		}
 
-		LANG="$1"
-		shift 1
-		STRING="$@"
-		_cat=$( which "cat" )
-		_bat=$( which "bat" )
-		[[ -n "$_bat" ]] &&  _bat "$STRING"
-		[[ -z $_bat ]] && echo $( printf '%s' "$@" ) | $( printf '%s' "$_cat"  ) 
-	};	
 
 	function _main ()  
 	{ 
-		local MATCH SRC N W GP GS GC GN ;
-		function _sourcefiles () 
-		{ 
-			function _sourcefile () 			{ 
-				source "$1" && _progress "$1" "$GC" 2 "$2"   || _progress "$1" "$GC" 1 "$2"
+		local MATCH SRC N W GP GS GC GN ERRN FILEN ;
+		function _sourcefiles () { 
+			function _sourcefile ()	{ 
+				FILEN="$2"
+				FILEN=$((FILEN-ERRN))
+				source "$1" &>/dev/null 
+				SUCCESS="$?"
+				[[ "$SUCCESS" == "0" ]] && _progress "$1" "$GC" 2 "$2" 
+				[[ "$SUCCESS" != "0" ]] && _failfile "$1" 
+			};
+			function _failfile() {
+				ERRN=$((ERRN+1))
+ 				echo "" #newline
+ 				_mask 0 "$GP" "$GS" "$GN" "$N" #mask
+ 				_progress "$1" "$GC" 1 "$ERRN"
+ 				printf '\x1b[F'
 			};
 			for CONF in $SELECTED;
 			do
@@ -72,12 +80,12 @@ USAGE:
 				[[ -e "$CONF" ]] && _sourcefile "$CONF" "$I" ;
 			done
 		};
-		function _m () #ANSI_m : ansi markup
-		{   #~       ANSIESC [$1:INT] ; [$2:INT] m [$3:STRING] ANSIESCm (:resets to default)
+		function _m () {#ANSI_m : ansi markup
+			#~       ANSIESC [$1:INT] ; [$2:INT] m [$3:STRING] ANSIESCm (:resets to default)
 			printf "\x1b[%s;3%sm%s\x1b[m" "$1" "$2" "$3"
 		};
-		function _G () #ANSI_G : ansi cursor to column on current line
-		{ 	#~       ANSIESC [$1:INT] G
+		function _G () {#ANSI_G : ansi cursor to column on current line
+			#~       ANSIESC [$1:INT] G
 			printf "\x1b[%sG" "$1"
 		};
 		function _Gm () # COMBINES G (linepos) and m (markup) 
@@ -108,20 +116,19 @@ USAGE:
 			_Gm  12  1  3   "$toprint"
 			_Gm "$2" 1 "$3" "$4" 
 			_G 80
-		};
-		
+		};		
 
 		SRC=$(realpath "${1}");
 		[[ -n "$2" ]] && MATCH="$2" || MATCH='/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$';
 		I=0;
 		SELECTED=$( find "$SRC" 2>/dev/null |grep -E "$MATCH" );
 		[[ -n "$SELECTED" ]] && N=$( echo "$SELECTED" |wc -l );
-		#terminal width :
 		W="${#N}";
 		GP=$((80-10-W*2))
 		GC=$((GP+1))
 		GS=$((GP+W+1))
 		GN=$((GP+W+2))
+		ERRN=0
 		_mask 0 "$GP" "$GS" "$GN" "$N" ;
 		_sourcefiles ;
 		_Gm "$((80-5))" 1 32 "DONE"
@@ -141,7 +148,7 @@ USAGE:
 			-i | --nocase)
 				shift 1 && CASE="-i" && ${FUNCNAME[0]} "$@"
 			;;
-			--warning)
+			-w | --warning)
 					batcat  help  "\x1b[1;31m$WARNING" >> /dev/stderr
 			;;
 			*)
