@@ -1,3 +1,15 @@
+# SourcePath
+## installation:
+```sh
+git clone https://github.com/hoefkensj/SourcePath
+cd SourcePath
+./install.Sh
+````
+
+
+HELP:
+```help
+
 ${FUNCNAME[0]} [-h]|[-iqd] [DIR] [MATCH]
 
 ARGS:
@@ -39,4 +51,5 @@ EXAMPLES:
 DEFAULTS:
 
     - MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$' 
-    - DIR: '$PWD'
+    - DIR: '\$PWD'
+```
