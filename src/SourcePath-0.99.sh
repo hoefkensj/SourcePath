@@ -66,7 +66,7 @@ DEFAULTS:
 		unset -f _bat
 	};
 
-	function main (){ 
+	function _main (){ 
 
 		function _sourcefiles () { 
 			function _sourcefile ()	{ 
