@@ -1,4 +1,4 @@
-3#!/usr/bin/env bash
+#!/usr/bin/env bash
 # ############################################################################
 # # PATH: /etc/profile.d                          AUTHOR: Hoefkens.J@gmail.com
 # # FILE: bash_sourcedir.sh                                   0v6 - 2023.04.26

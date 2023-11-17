@@ -1,2 +1,0 @@
-set  -o xtrace
-source /etc/profile

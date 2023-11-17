@@ -12,7 +12,7 @@ function install_me() {
 	[[ -z $INSTALLDIR ]] && INSTALLDIR="/opt/local/scripts/bash"
 	PKGDIR="${INSTALLDIR}/${PKGNAME}"
 	mkdir -vp $PKGDIR
-	latest=$(ls "$PWD/src/SourcePath-"*|sort -n |tail -n 1 )
+	latest=$(ls -1 "$PWD/src/SourcePath-"*|sort -n |tail -n 1 )
 	cp -vf $latest $PKGDIR
 	cd $PKGDIR
 	installed=$(ls "$PWD/SourcePath-"*|sort -n |tail -n 1 )

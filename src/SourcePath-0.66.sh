@@ -6,7 +6,7 @@
 #
 function sourcepath {
 	local EXENAME="sourcepath"
-	local VERSION="0.66"
+	local VERSION="0.661"
 	local WARNING="WARNING: This File Needs to be Sourced not Executed ! ";
 	local HELP="""${FUNCNAME[0]} [-h]|[-iqd] [DIR] [MATCH]
 
@@ -103,7 +103,7 @@ ${FUNCNAME[0]} v ${VERSION}
 
 		function _sourcefile () {
 			source "$1" 2>/dev/null
-			[[ $? -eq 0 ]] && printf 'true' || printf 'false'
+			[[ $? -eq 0 ]] && SUCCESS='true' || SUCCESS='false'
 		}
 		function _sourcefiles () {
 			local COUNT SUCCESS DONE FAIL SCONF
@@ -114,13 +114,15 @@ ${FUNCNAME[0]} v ${VERSION}
 			do
 				COUNT=$((COUNT+1))
 				SCONF="$( bash_shorten_path $CONF 50 )"
-				[[ -e "$CONF" ]] && SUCCESS=$( _sourcefile "$CONF"  ) 2>/dev/null
+				[[ -e "$CONF" ]] &&  _sourcefile "$CONF"  2>/dev/null
 				[[ "$SUCCESS" == "true" ]] && DONE=$((DONE +1 )) && print_progress $DONE $SCONF
 				[[ "$SUCCESS" == "false" ]] && FAIL=$((FAIL +1 )) && print_fail $COUNT $SCONF $FAIL
 			done
-		 	print_progress $DONE "$( bash_shorten_path $SRC 50 )"
+		 	print_progress $DONE $SSRC
 			Y=$((FAIL+2))
-			printf '\x1b[%sE' "$Y"
+			for ((i = 0 ; i <  Y ; i++)); do
+  				printf '\n'
+			done
 		};
 
 		function print_progress(){
@@ -128,7 +130,7 @@ ${FUNCNAME[0]} v ${VERSION}
 			I=$1
 			IW="${#I}";
 			GC=$((GS-IW))
-			CL=$((GC-1))
+			GL=$((GC-1))
 			printf $_Gm 1 1 7 "Sourced:" ;
 			printf $_Gm 12 1 3 $2 ;
 			printf $_Gm "$GL" 1 7 "[" ; 
@@ -144,7 +146,10 @@ ${FUNCNAME[0]} v ${VERSION}
 			IW="${#I}";
 			GI=$((GE-IW))
 			GL="$((GI-1))"
-			printf '\x1b[%sE' $Y 
+
+			for ((i = 0 ; i <  Y ; i++)); do
+  				printf '\n'
+			done
 			printf $_Gm  1 0 1 "FAILED:";
 			printf $_Gm  12 1 3 $2;
 			printf $_Gm  "$GL" 0 7 "["; 
@@ -153,14 +158,15 @@ ${FUNCNAME[0]} v ${VERSION}
 			printf '\x1b[%sF' $Y 
 		}
 
-		local _m _Gm SRC SELECTED MATCH N C W GE GP GC GS GN
-		_m='\x1b[%s;3%sm%s\x1b[m'
+		local _m _Gm SRC SSRC SELECTED MATCH N C W GE GP GC GS GN SUCCESS
+ 		_m='\x1b[%s;3%sm%s\x1b[m'
 		_Gm="\x1b[%sG${_m}\x1b[G"
 		SRC=$(realpath "${1}");
+		SSRC=$( bash_shorten_path "${SRC}" 50 )
 		[[ -n "$2" ]] && MATCH="$2" || MATCH='/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$';
 		SELECTED=$( find "$SRC" 2>/dev/null |grep -E "$MATCH" );
 		[[ -n "$SELECTED" ]] && N=$( echo "$SELECTED" |wc -l );
-		[[ -n "$2" ]] && C=$2 || C=80
+		[[ -n "$3" ]] && C=$3 || C=80
 		W="${#N}";
 		GE=$((C-1))
 		GN=$((GE-W))
@@ -169,29 +175,28 @@ ${FUNCNAME[0]} v ${VERSION}
 		_sourcefiles ;
 	};
 
-	function sourcepath_cli() {
-		case "$1" in
-			-h | --help | '')
-				batcat help "$HELP"
-				;;
-			-d | --debug)
-				shift && set -o xtrace && ${FUNCNAME[0]} "$@"
-				;;
-			-q | --quiet)
-				shift 1 && ${FUNCNAME[0]} "$@" &> /dev/null
-				;;
-			-i | --nocase)
-				shift 1 && CASE="-i" && ${FUNCNAME[0]} "$@"
-				;;
-			-w | --warning)
-				batcat  help  "\x1b[1;31m$WARNING" >> /dev/stderr
-				;;
-			*)
-				_main "$@"
-				;;
-		esac;
-	} 
-	sourcepath_cli "$@"
+
+	case "$1" in
+		-h | --help | '')
+			batcat help "$HELP"
+			;;
+		-d | --debug)
+			shift && set -o xtrace && ${FUNCNAME[0]} "$@"
+			;;
+		-q | --quiet)
+			shift 1 && ${FUNCNAME[0]} "$@" &> /dev/null
+			;;
+		-i | --nocase)
+			shift 1 && CASE="-i" && ${FUNCNAME[0]} "$@"
+			;;
+		-w | --warning)
+			batcat  help  "\x1b[1;31m$WARNING" >> /dev/stderr
+			;;
+		*)
+			_main "$@"
+			;;
+	esac;
+
 }
 
 #make sure its sourced not executed
