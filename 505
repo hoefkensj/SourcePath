@@ -1,0 +1,4 @@
+cd ..
+cd /home/hoefkens/Development/Code/bash/Projects/bash_scripts/SourcePath/
+./install.sh
+source /etc/profile

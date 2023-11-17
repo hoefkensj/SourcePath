@@ -9,7 +9,7 @@ FNCNAME="sourcepath"
 
 function install_me() {
 	local INSTALLDIR PKGDIR latest installed
-	[[ -z INSTALLDIR ]] && INSTALLDIR="/opt/local/scripts/bash"
+	[[ -z $INSTALLDIR ]] && INSTALLDIR="/opt/local/scripts/bash"
 	PKGDIR="${INSTALLDIR}/${PKGNAME}"
 	mkdir -vp $PKGDIR
 	latest=$(ls "$PWD/src/SourcePath-"*|sort -n |tail -n 1 )

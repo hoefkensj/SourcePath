@@ -77,7 +77,7 @@ DEFAULTS:
 				source "$1" &>/dev/null 
 				SUCCESS="$?"
 				[[ "$SUCCESS" == "0" ]] && _progress "$1" "$GC" 2 "$2" 
-				[[ "$SUCCESS" != "0" ]] && echo $1 && _failfile "$1" 
+				[[ "$SUCCESS" != "0" ]] && printf $1 && _failfile "$1" 
 			};
 			function _failfile() {
 				ERRN=$((ERRN+1))
@@ -180,8 +180,8 @@ DEFAULTS:
 			;;
 		esac;
 	};
-sourcepath_cli $@
-unset -f batcat _main  _sourcefiles  _m _G _progress _mask _state _
+	sourcepath_cli $@
+	unset -f batcat _main  _sourcefiles  _m _G _progress _mask _state sourcepath_cli
 }
 #make sure its sourced not executed
 (return 0 2>/dev/null) || sourcepath --warning
