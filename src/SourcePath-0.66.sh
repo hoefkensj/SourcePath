@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ############################################################################
 # # PATH: /etc/profile.d                        AUTHOR: Hoefkens.J@gmail.com #
-# # FILE: SourcePath.sh                                0v99 - 2023.05.22 #
+# # FILE: SourcePath.sh                                    0v66 - 2024.01.07 #
 # ############################################################################
 #
 function sourcepath {
@@ -42,7 +42,7 @@ EXAMPLES:
 
 sourcepath -q ~/.config/bashrc/ '.*\.bashrc'
 
-- Source all files in '.env' starting with "config" case insensitive
+- Source all files in '.env' starting with 'config' , Case-Insensitive
     ...this inlcudes 'CONFIG.cfg' 'conFig.conf' but not 'mycfg.config'
 
 sourcepath -i .env '^config.*'
@@ -55,9 +55,9 @@ sourcepath ~/.bash_aliasses/ '\/[0-9]{2}_.*$'  :
 DEFAULTS:
 
 -MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$'
--DIR: '$PWD'
+-DIR: '\$PWD'
 
-(C) Hoefkens Jeroen
+gitrepo : github.com/hoefkensj/SourcePath (CC) Hoefkens Jeroen
 ${FUNCNAME[0]} v ${VERSION}
 '''"""
 	# set -o errexit
@@ -163,7 +163,7 @@ ${FUNCNAME[0]} v ${VERSION}
 		SRC=$(realpath "${1}");
 		SSRC=$( bash_shorten_path "${SRC}" 50 )
 		[[ -n "$2" ]] && MATCH="$2" || MATCH='/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$';
-		SELECTED=$( find "$SRC" 2>/dev/null |grep -E "$MATCH" );
+		SELECTED=$( find "$SRC" 2>/dev/null |grep -E $CASE "$MATCH" );
 		[[ -n "$SELECTED" ]] && N=$( echo "$SELECTED" |wc -l );
 		[[ -n "$3" ]] && C=$3 || C=80
 		W="${#N}";
