@@ -85,15 +85,19 @@ ${FUNCNAME[0]} v ${VERSION}
 	};
 
 	function bash_shorten_path() {
-		local $_PATH $_LEN
-		_PATH=$1
+		local _PATH _LEN
+		_BASE=$(basename $1)
+		_DIR=$(dirname $1)
+		_PATH=$_DIR
 		_LEN=$2
 		while true  ; do
-			[[ ${#_PATH} >  $_LEN ]]  && _PATH=".../${_PATH#*/*/}" 
-			[[ ${#_PATH} <  $_LEN ]]  && _PATH="${_PATH} "
+			[[ ${#_PATH} > $_LEN ]]  && _PATH="${_PATH#*/*/}" 
+			[[ ${#_PATH} < $_LEN ]]  && _PATH="${_PATH} "
 			[[ ${#_PATH} == $_LEN ]]  && break;
+			sleep 0.001
 		done
-		printf '%s' "${_PATH}"	
+		printf '%s%s' "$PFX" "${_PATH}"	
+
 	};
 
 	function _main (){
@@ -161,7 +165,7 @@ ${FUNCNAME[0]} v ${VERSION}
  		_m='\x1b[%s;3%sm%s\x1b[m'
 		_Gm="\x1b[%sG${_m}\x1b[G"
 		SRC=$(realpath "${1}");
-		SSRC=$( bash_shorten_path "${SRC}" 50 )
+		SSRC=$( bash_shorten_path "${SRC}" 47 )
 		[[ -n "$2" ]] && MATCH="$2" || MATCH='/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$';
 		SELECTED=$( find "$SRC" 2>/dev/null |grep -E $CASE "$MATCH" );
 		[[ -n "$SELECTED" ]] && N=$( echo "$SELECTED" |wc -l );
