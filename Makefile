@@ -1,7 +1,7 @@
 NAME=SourcePath
 SRC=src/${NAME}
 DST=/etc/bash/bashrc.d/
-VER=0.66
+VER=0.67
 install:
 	chmod 664   $(SRC)/$(NAME)-$(VER).sh
 	install -Dv $(SRC)/$(NAME)-$(VER).sh $(DST)/${NAME}.sh
