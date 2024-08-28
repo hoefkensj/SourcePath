@@ -39,41 +39,41 @@ MATCH:
 WARNING:
 
 - GLOBBING
-     globbing does not work for filenames appended to the dir.
+    - globbing does not work for filenames appended to the dir.
+    - shell globbing does work in the path (EX: 1.c.)
+    - shell globbing also works outside the '' of the regex <MATCH> (EX 1.d.)
 
-I :  if you want to source all .sh files in ./bashrc/ :
-
-sourcepath ~/.bashrc/*.sh     - this won't work!
-sourcepath ~/.bashrc '*.sh$'  - this will:
-
-- shell globbing does work in the path 
-- shell globbing also works outside the '' of the regex <MATCH>
-
-sourcepath ~/.env/*.d/ '*.sh$'
-sourcepath ~/.env/bash.d/ '^[0-9]{2}'_*
  
 
 
 EXAMPLES:
-- Source files in ~/.config/bashrc/ that end in '.bashrc'
+- (1) If you want to source all .sh files in ~/.bashrc/ :
+
+  a) sourcepath ~/.bashrc/*.sh     - this won't work!
+  b) sourcepath ~/.bashrc '*.sh$'  - this will
+
+  c) sourcepath ~/.env/*.d/ '*.sh$'
+  d) sourcepath ~/.env/bash.d/ '^[0-9]{2}'_*
+
+- (2) Source files in ~/.config/bashrc/ that end in '.bashrc'
     ...and (-q) do not produce any output:
 
 sourcepath -q ~/.config/bashrc/ '.*\.bashrc'
 
-- Source all files in '.env' starting with 'config' , Case-Insensitive
+- (3) Source all files in '.env' starting with 'config' , Case-Insensitive
     ...this inlcudes 'CONFIG.cfg' 'conFig.conf' but not 'mycfg.config'
 
 sourcepath -i .env '^config.*'
 
-- Source all files in '~/.bash_aliasses/' starting with 2 numbers,
+- (4) Source all files in '~/.bash_aliasses/' starting with 2 numbers,
 ...followed by an '_'. this matches '00_file.alias' but not '99file' or '.00_filea'
 
 sourcepath ~/.bash_aliasses/ '\/[0-9]{2}_.*$'  :
 
 DEFAULTS:
 
--MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$'
--DIR: '\$PWD'
+- MATCH: '/[0-9]+[_-]*.*\.(sh|bash|bashrc|rc|conf|cfg)$'
+- DIR: '\$PWD'
 
 gitrepo : github.com/hoefkensj/SourcePath (CC) Hoefkens Jeroen
 ${FUNCNAME[0]} v ${VERSION}
