@@ -4,7 +4,8 @@
 ```sh
 git clone https://github.com/hoefkensj/SourcePath
 cd SourcePath
-./install.sh
+# as root :
+make install
 ````
 ## USAGE:
 > (log out and in again) or  :
