@@ -8,10 +8,12 @@ cd SourcePath
 make install
 ````
 ## USAGE:
-> (log out and in again) or  :
-```sh
-source /etc/profile
-```
+### after installing:
+    - log out and in again
+    or
+    ```sh
+    source /etc/profile
+    ```
 then on commandline:
 ```sh
 sourcepath [directory]
