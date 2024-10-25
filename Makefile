@@ -1,8 +1,12 @@
 NAME=SourcePath
+PKG_NAME=SourcePath
+REPO_NAME=hoefkensj/sourcepath
+
 SRC=src/${NAME}
-OPT=/opt/local/scripts/bash/$(NAME)/
-DST=/etc/bash/bashrc.d/
+OPT=/opt/local/scripts/bash/$(NAME)
+DST=$(find /etc/ 2>/dev/null |grep bashrc.d$  2>/dev/null)
 VER=0.67
+
 install:
 	chmod 664   $(SRC)/$(NAME)-$(VER).sh
 	install -Dv $(SRC)/$(NAME)-$(VER).sh  $(OPT)/$(NAME)-$(VER).sh
