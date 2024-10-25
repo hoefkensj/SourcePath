@@ -9,20 +9,29 @@ make install
 ````
 ## USAGE:
 ### after installing:
-    - log out and in again
+- log out and in again
     or
-    ```sh
-    source /etc/profile
-    ```
-then on commandline:
+```sh
+source /etc/profile
+```
+
+#### Use from commandline:
 ```sh
 sourcepath [directory]
 ```
-or in your ~/.bashrc
+#### Use from  ~/.bashrc
 ```bash
 sourcepath ~/.config/bash/rc/
 ```
-> you can split your bashrc up in multiple files if its getting to long
+
+this means you can split your bashrc into multiple files:
+    - only files with errors will not load everything else will
+    - gives feedback on wich files did not load if any.
+if everything loaded as expected :
+![image](https://github.com/user-attachments/assets/60d71b06-3728-4657-8c19-2e155c0d8731)
+
+if something went wrong , in this case the 5th file out of 8, (7/8 still loaded successfully) 
+![image](https://github.com/user-attachments/assets/da166203-19c7-4c28-98c0-30cf362e0b68)
 
 ```sh
 sourcepath --help
