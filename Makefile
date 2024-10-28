@@ -11,7 +11,7 @@ VER=0.67
 
 
 checkrc:
-	DST=$(shell fixrc.sh)
+	DST=$(shell ./fixrc.sh)
 
 install: checkrc
 	echo "installing"

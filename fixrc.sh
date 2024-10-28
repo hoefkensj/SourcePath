@@ -22,7 +22,7 @@ function append_sourcebashrcd(){
 
 function fixrc(){
 	RCFILE=$( find /etc -type f -iname *'bash*rc'* 2>/dev/null |grep -v skel|head -n 1)
-	[[ -n $RCFILE ]] echo "bash rc: $RCFILE found: $RCFILE" || echo "could not detect any bash rc file ... "
+	[[ -n $RCFILE ]] && echo "bash rc: $RCFILE found: $RCFILE" || echo "could not detect any bash rc file ... "
 	install -m 755 -dv "${DIRRC}"
 	echo "$DIRRC created"
 	echo '#SourcePath' > "${DIRRC}/.createdby"
