@@ -20,7 +20,7 @@ install: checkrc
 	ln -sv $(OPT)/$(NAME)-$(VER).sh $(OPT)/$(NAME).sh
 	ln -sv $(OPT)/$(NAME).sh $(DST)/$(NAME).sh
 
-uninstall: checkrcd
+uninstall: checkrc
 	rm -v $(DST)/$(NAME).sh
 	rm -v $(OPT)/$(NAME)-$(VER).sh
 	rm -v $(OPT)/$(NAME).sh
