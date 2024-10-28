@@ -10,7 +10,7 @@ END=/etc/environment.d/
 VER=0.67
 
 RCD_EXISTS := $(shell [ -d "$(RCD)" ] && echo "yes" || echo "no")
-DST := $(shell install.sh )
+
 
 ifeq ($(RCD_EXISTS),yes)
 	DST=$(RCD)
