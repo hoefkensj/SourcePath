@@ -10,23 +10,13 @@ END=/etc/environment.d/
 VER=0.67
 
 RCD_EXISTS := $(shell [ -d "$(RCD)" ] && echo "yes" || echo "no")
-END_EXISTS := $(shell [ -d "$(END)" ] && echo "yes" || echo "no")
+DST := $(shell install.sh )
 
 ifeq ($(RCD_EXISTS),yes)
 	DST=$(RCD)
-else ifeq ($(END_EXISTS),yes)
-	DST=$(END)
-else
-    ifneq ("$(wildcard /etc/bash/bashrc /etc/bash/bashrc.bashrc /etc/bashrc.bashrc)","")
-        FALLBACK_FILE := $(firstword $(wildcard /etc/bash/bashrc /etc/bash/bashrc.bashrc /etc/bashrc.bashrc))
-        
-        $(shell grep -qxF 'for sh in /etc/bash/bashrc.d/* ; do [[ -r $$sh ]] && source "$$sh" ; done' $(FALLBACK_FILE) || \
-            echo 'for sh in /etc/bash/bashrc.d/* ; do [[ -r $$sh ]] && source "$$sh" ; done' >> $(FALLBACK_FILE))
+else 
+	DST=$(shell fixrc.sh)
 
-        $(shell mkdir -p $(RCD))
-    else
-        $(error "No valid destination directory or file found to source scripts.")
-    endif
 endif
 
 install: checkrc
