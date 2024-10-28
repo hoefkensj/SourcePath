@@ -8,18 +8,10 @@ OPT=/opt/local/scripts/bash/$(NAME)/
 RCD=/etc/bash/bashrc.d/
 VER=0.67
 
-RCD_EXISTS := $(shell [ -d "$(RCD)" ] && echo "yes" || echo "no")
+
 
 checkrc:
-	echo "checkrc"
-	ifeq ($(RCD_EXISTS),yes)
-		echo "$(RCD) found"
-		DST=$(RCD)
-	else 
-		echo "$(RCD) missing"	
-		DST=$(shell fixrc.sh)
-		echo " using : $(DST)"
-	endif
+	DST=$(shell fixrc.sh)
 
 install: checkrc
 	echo "installing"
