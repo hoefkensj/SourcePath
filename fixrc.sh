@@ -30,9 +30,9 @@ function fixrc(){
 }
 
 function findrc(){
-	[[ -d $DIRRC ]] && echo $DIRRC found && DST=$DIRRC
-	[[ -z $DST ]] && echo $DIRRC missing && [[ -d $DIRENV ]] && echo $DIRENV found && DST=$DIRENV
-	[[ -z $DST ]] && echo $DIRRENV missing && fixrc || printf "${DST}"
+	[[ -d $DIRRC ]] && echo "$DIRRC found" && DST=$DIRRC
+	[[ -z $DST ]] && echo $DIRRC missing && [[ -d $DIRENV ]] && echo "$DIRENV found" && DST=$DIRENV
+	[[ -z $DST ]] && echo "$DIRRENV missing" && fixrc || printf "${DST}"
 
 }
 
