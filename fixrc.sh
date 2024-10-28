@@ -37,5 +37,5 @@ function findrc(){
 }
 
 RCDIR="$(findrc)"
-[[ -z $RCDIR ]] && RCDIR="$(findrc)"
+[[ -z $RCDIR ]] && DIRRC="$(findrc)" || DIRRC=$RCDIR
 printf "%s" $RCDIR
