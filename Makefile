@@ -11,7 +11,7 @@ VER=0.67
 
 RCD_EXISTS := $(shell [ -d "$(RCD)" ] && echo "yes" || echo "no")
 
-
+checkrc:
 ifeq ($(RCD_EXISTS),yes)
 	DST=$(RCD)
 else 
