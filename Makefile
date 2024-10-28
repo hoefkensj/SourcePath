@@ -3,9 +3,9 @@ PKG_NAME=SourcePath
 REPO_NAME=hoefkensj/sourcepath
 
 SRC=src/$(PKG_NAME)
-OPT=/opt/local/scripts/bash/$(NAME)/
+OPT=/opt/local/scripts/bash/$(NAME)
 
-RCD=/etc/bash/bashrc.d/
+DST=/etc/bash/bashrc.d
 VER=0.67
 
 
